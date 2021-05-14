@@ -5,10 +5,7 @@
 
 JDBC Swiss Knife is a simple set of utilities for handling jdbc accessible metadata
 
-## Set up
-GomorraSQL can be used either as a Java library or as a standalone SQL database client.
-
-### Java library
+## Getting started
 To use it as a Java library, add this MAVEN
 
 ### Supported Databases 
