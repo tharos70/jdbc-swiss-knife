@@ -13,6 +13,18 @@ So far the library only supports Postgresql databases
 
 ## How to
 
+### Show all tables information
+
+TODO
+
+### Generate spring jdbc template based DAO java classes
+
+TODO
+
+### Generate swagger yaml definition file from database
+
+TODO
+
 ## Contributions
 Improvements are always appreciated! If you want to contribute to this project though, remember to open an issue with your suggestion before doing any changes. This will help you avoid working on something that won't get merged.
 
