@@ -1,6 +1,6 @@
 # jdbc-swiss-knife
 
-![logo](https://user-images.githubusercontent.com/14991778/117669306-0a931c00-b1a7-11eb-8db8-babc14e767d1.png)
+![logo](/assets/img/logo.png
 
 
 JDBC Swiss Knife is a simple set of utilities for handling jdbc accessible metadata
