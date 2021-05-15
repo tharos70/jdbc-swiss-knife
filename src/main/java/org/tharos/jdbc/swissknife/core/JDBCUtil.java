@@ -13,11 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 
 
 public class JDBCUtil {
+	
+	private Logger LOGGER = LogManager.getLogger(getClass().getName());
 
     String className, URL, user, password;
     Connection connection;
@@ -36,7 +40,7 @@ public class JDBCUtil {
         try {
             Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            System.out.println("Unable to load the class. Terminating the program");
+            LOGGER.error("Unable to load the class. Terminating the program");
             System.exit(-1);
         }
 
@@ -44,23 +48,23 @@ public class JDBCUtil {
         try {
             connection = DriverManager.getConnection(URL, user, password);
         } catch (SQLException ex) {
-            System.out.println("Error getting connection: " + ex.getMessage());
+        	LOGGER.error("Error getting connection: " + ex.getMessage());
             System.exit(-1);
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
+        	LOGGER.error("Error: " + ex.getMessage());
             System.exit(-1);
         }
 
         if(connection != null)
         {
-            System.out.println("Connected Successfully!");
+        	LOGGER.info("Connected Successfully!");
         }
 
     }
 
+//    TODO
     public void executeQuery()
     {
-        System.out.println("Enter your SQL query here: ");
         Scanner scanner = new Scanner(System.in);
         String query = scanner.nextLine();
         ResultSet resultSet = null;
@@ -105,12 +109,12 @@ public class JDBCUtil {
         }
         catch (SQLException ex)
         {
-            System.out.println("Error while fetching metadata. Terminating program.. " + ex.getMessage());
+        	LOGGER.error("Error while fetching metadata. Terminating program.. " + ex.getMessage());
             System.exit(-1);
         }
         catch (Exception ex)
         {
-            System.out.println("Error while fetching metadata. Terminating program.. " + ex.getMessage());
+        	LOGGER.error("Error while fetching metadata. Terminating program.. " + ex.getMessage());
             System.exit(-1);
         }
 
@@ -159,12 +163,12 @@ public class JDBCUtil {
         }
         catch (SQLException ex)
         {
-            System.out.println("Error while fetching metadata. Terminating program.. " + ex.getMessage());
+        	LOGGER.error("Error while fetching metadata. Terminating program.. " + ex.getMessage());
             System.exit(-1);
         }
         catch (Exception ex)
         {
-            System.out.println("Error while fetching metadata. Terminating program.. " + ex.getMessage());
+        	LOGGER.error("Error while fetching metadata. Terminating program.. " + ex.getMessage());
             System.exit(-1);
         }
         return new ArrayList<Column>(colsMap.values());
