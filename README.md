@@ -1,4 +1,5 @@
-# jdbc-swiss-knife
+# jdbc-swiss-knife 
+[![Build Status](https://travis-ci.com/tharos70/jdbc-swiss-knife.svg?token=kbKF5Pe78YjqptYzcmBk&branch=main)](https://travis-ci.com/tharos70/jdbc-swiss-knife)
 
 ![logo](/assets/img/logo.png)
 
