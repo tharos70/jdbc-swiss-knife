@@ -12,13 +12,13 @@ public abstract class Strategy {
 	protected static Logger LOGGER = LogManager.getLogger(App.class.getName());
 	private String name;
 	
-	public void executeStrategy(Table table, String prefixToExclude) throws IOException {
-		LOGGER.info("DtoStrategy:"+this.getName()+" - IN");
-		this.executeInternalStrategy(table, prefixToExclude);
-		LOGGER.info("DtoStrategy:"+this.getName()+" - OUT");
+	public void executeStrategy(Table table, String prefixToExclude, String basePackage) throws IOException {
+		LOGGER.info("Strategy:"+this.getName()+" - IN");
+		this.executeInternalStrategy(table, prefixToExclude, basePackage);
+		LOGGER.info("Strategy:"+this.getName()+" - OUT");
 	}
 	
-	public abstract void executeInternalStrategy(Table table, String prefixToExclude) throws IOException;
+	protected abstract void executeInternalStrategy(Table table, String prefixToExclude, String basePackage) throws IOException;
 
 	public void setName(String name) {
 		this.name = name;

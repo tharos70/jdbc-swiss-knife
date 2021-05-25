@@ -25,12 +25,15 @@ public class DatabaseMetadataExtractor {
 	private String className, URL, user, password;
 	private Connection connection;
 
-	public DatabaseMetadataExtractor(String className, String URL, String user, String password) {
+	private String schema;
+
+	public DatabaseMetadataExtractor(String className, String URL, String user, String password, String schema) {
 		this.className = className;
 		this.URL = URL;
 		this.user = user;
 		this.password = password;
 		this.connection = null;
+		this.schema = schema;
 	}
 
 	private Connection initializeConnection() {
@@ -85,7 +88,7 @@ public class DatabaseMetadataExtractor {
 		try {
 			databaseMetaData = connection.getMetaData();
 			String[] tableType = new String[] { "TABLE" };
-			ResultSet resultSet = databaseMetaData.getTables(null, this.user, null, tableType);
+			ResultSet resultSet = databaseMetaData.getTables(null, this.schema, null, tableType);
 			while (resultSet.next()) {
 				Table tbl = new Table();
 				tbl.setName(resultSet.getString("TABLE_NAME"));

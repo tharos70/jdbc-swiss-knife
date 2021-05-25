@@ -5,10 +5,11 @@ import java.io.IOException;
 import javax.lang.model.element.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 
+import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -21,14 +22,12 @@ public class DtoStrategy extends Strategy {
 		setName("DtoStrategy");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void executeInternalStrategy(Table table, String prefixToExclude) throws IOException {
-		
-		String purifiedName = WordUtils.capitalizeFully(StringUtils.removeStart(table.getName(), prefixToExclude)); 
-		LOGGER.info("purifiedName ["+purifiedName+"]");
+	public void executeInternalStrategy(Table table, String prefixToExclude, String basePackage) throws IOException {
+		String purifiedName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, StringUtils.removeStart(table.getName(), prefixToExclude));
+		LOGGER.info("1 purifiedName ["+purifiedName+"]");
 		Builder dtoSpecBuilder = TypeSpec
-				  .classBuilder(purifiedName) //TODO gestire il camel case
+				  .classBuilder(purifiedName) 
 				  .addModifiers(Modifier.PUBLIC);
 		for(Column col: table.getColumnList()) {
 			String colType = col.getType();
@@ -42,7 +41,7 @@ public class DtoStrategy extends Strategy {
 			} 
 
 			FieldSpec columnField = FieldSpec
-					  .builder(String.class, col.getName()) //TODO gestire correttamente il tipo
+					  .builder(String.class, CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, col.getName()))
 					  .addModifiers(Modifier.PRIVATE)
 					  .initializer("null")
 					  .build();
@@ -68,7 +67,7 @@ public class DtoStrategy extends Strategy {
 			TypeSpec dtoType = dtoSpecBuilder.build();
 			
 			JavaFile javaFile = JavaFile
-					  .builder("com.baeldung.javapoet.person", dtoType)
+					  .builder(basePackage+".dto", dtoType)
 					  .indent("    ")
 					  .build();
 			javaFile.writeTo(System.out);

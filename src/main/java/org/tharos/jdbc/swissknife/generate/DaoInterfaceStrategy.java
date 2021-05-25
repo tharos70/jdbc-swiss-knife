@@ -1,13 +1,10 @@
 package org.tharos.jdbc.swissknife.generate;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.tharos.jdbc.swissknife.dto.Table;
 
-import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 
@@ -18,13 +15,7 @@ public class DaoInterfaceStrategy extends Strategy {
 	}
 
 	@Override
-	public void executeStrategy(Table table, String prefixToEclude) throws IOException {
-		
-		
-		
-		
-		
-		
+	public void executeInternalStrategy(Table table, String prefixToExclude, String basePackage) throws IOException {
 		MethodSpec findByKey = MethodSpec.methodBuilder("findByKey")
 			    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 			    .returns(void.class)
@@ -41,13 +32,6 @@ public class DaoInterfaceStrategy extends Strategy {
 //			    .build();
 //
 //			javaFile.writeTo(System.out);
-		
-	}
-
-	@Override
-	public void executeInternalStrategy(Table table, String prefixToExclude) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	
