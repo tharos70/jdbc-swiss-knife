@@ -3,7 +3,7 @@ package org.tharos.jdbc.swissknife.dto;
 public class Column {
 
 	private String name;
-	private String type;
+	private Class type;
 	private boolean nullable;
 	private Integer size;
 	private Integer decimalDigits;
@@ -85,11 +85,11 @@ public class Column {
 		this.name = name;
 	}
 
-	public String getType() {
+	public Class getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(Class type) {
 		this.type = type;
 	}
 	

@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,7 +135,7 @@ public class DatabaseMetadataExtractor {
 			while (columns.next()) {
 				Column col = new Column();
 				col.setName(columns.getString("COLUMN_NAME"));
-				col.setType(columns.getString("DATA_TYPE"));
+      			col.setType(SQLTypeMap.toClass( columns.getInt( "DATA_TYPE" ) ));
 				col.setNullable(columns.getBoolean("IS_NULLABLE"));
 				col.setAutoincrement(columns.getBoolean("IS_AUTOINCREMENT"));
 				col.setSize(columns.getInt("COLUMN_SIZE"));

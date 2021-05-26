@@ -30,37 +30,27 @@ public class DtoStrategy extends Strategy {
 				  .classBuilder(purifiedName) 
 				  .addModifiers(Modifier.PUBLIC);
 		for(Column col: table.getColumnList()) {
-			String colType = col.getType();
-			switch (colType) {
-			case "TODO":
-				
-				break;
-
-			default:
-				break;
-			} 
+			Class colType = col.getType();
+			
 
 			FieldSpec columnField = FieldSpec
-					  .builder(String.class, CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, col.getName()))
+					  .builder(colType, CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, col.getName()))
 					  .addModifiers(Modifier.PRIVATE)
 					  .initializer("null")
 					  .build();
 			dtoSpecBuilder.addField(columnField);
 			
-			
-			
-			
 			dtoSpecBuilder.addMethod(MethodSpec
 					    .methodBuilder("get"+WordUtils.capitalize(col.getName()))
 					    .addModifiers(Modifier.PUBLIC)
-					    .returns(String.class)
+					    .returns(colType)
 					    .addStatement("return this."+col.getName())
 					    .build())
 					  .addMethod(MethodSpec
 					    .methodBuilder("set"+WordUtils.capitalize(col.getName()))
 					    .addParameter(String.class, col.getName())
 					    .addModifiers(Modifier.PUBLIC)
-					    .returns(String.class)
+					    .returns(colType)
 					    .addStatement("this."+col.getName()+" = "+col.getName())
 					    .build());
 					  
