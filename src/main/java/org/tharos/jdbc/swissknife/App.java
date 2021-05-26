@@ -1,5 +1,6 @@
 package org.tharos.jdbc.swissknife;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public class App {
 		Strategy dtoStrategy = new DtoStrategy();
 		strategies.add(dtoStrategy);
 		try {
-			new GenericGenerator(strategies, tableList, "geoapi_t","com.tharos.jdbc.swissknife.out").executeStrategies();
+			new GenericGenerator(new File("C:\\workspaces\\jdbc-swiss-knife\\gen"),strategies, tableList, "geoapi_t","com.tharos.jdbc.swissknife.out").executeStrategies();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

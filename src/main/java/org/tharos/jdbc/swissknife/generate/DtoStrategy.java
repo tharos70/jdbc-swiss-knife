@@ -1,5 +1,6 @@
 package org.tharos.jdbc.swissknife.generate;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.lang.model.element.Modifier;
@@ -23,7 +24,7 @@ public class DtoStrategy extends Strategy {
 	}
 
 	@Override
-	public void executeInternalStrategy(Table table, String prefixToExclude, String basePackage) throws IOException {
+	public void executeInternalStrategy(File file, Table table, String prefixToExclude, String basePackage) throws IOException {
 		String purifiedName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, StringUtils.removeStart(table.getName(), prefixToExclude));
 		LOGGER.info("1 purifiedName ["+purifiedName+"]");
 		Builder dtoSpecBuilder = TypeSpec
@@ -60,7 +61,7 @@ public class DtoStrategy extends Strategy {
 					  .builder(basePackage+".dto", dtoType)
 					  .indent("    ")
 					  .build();
-			javaFile.writeTo(System.out);
+			javaFile.writeTo(file);
 			
 		}
 		
