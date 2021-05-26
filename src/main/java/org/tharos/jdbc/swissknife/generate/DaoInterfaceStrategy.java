@@ -1,5 +1,6 @@
 package org.tharos.jdbc.swissknife.generate;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.tharos.jdbc.swissknife.dto.Table;
@@ -15,7 +16,7 @@ public class DaoInterfaceStrategy extends Strategy {
 	}
 
 	@Override
-	public void executeInternalStrategy(Table table, String prefixToExclude, String basePackage) throws IOException {
+	public void executeInternalStrategy(File file, Table table, String prefixToExclude, String basePackage) throws IOException {
 		MethodSpec findByKey = MethodSpec.methodBuilder("findByKey")
 			    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 			    .returns(void.class)
