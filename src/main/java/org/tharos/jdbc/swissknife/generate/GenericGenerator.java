@@ -2,12 +2,13 @@ package org.tharos.jdbc.swissknife.generate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tharos.jdbc.swissknife.App;
 import org.tharos.jdbc.swissknife.dto.Table;
+import org.tharos.jdbc.swissknife.generate.strategy.Strategy;
+import org.tharos.jdbc.swissknife.generate.strategy.dao.DaoPatternStrategy;
 
 public class GenericGenerator {
 
@@ -24,25 +25,26 @@ public class GenericGenerator {
 
   public GenericGenerator(
     File file,
-    List<Strategy> strategies,
     List<Table> tables,
     String prefixToEsclude,
     String basePackage
   ) {
     this.file = file;
-    this.strategies = strategies;
     this.tables = tables;
     this.prefixToExclude = prefixToEsclude;
     this.basePackage = basePackage;
   }
 
-
-public void executeStrategies() throws IOException {
+  public void executeStrategies() throws IOException {
     LOGGER.info("GenericGenerator:executeStrategies - IN");
-    for (Strategy strategy : this.strategies) {
-      for (Table table : this.tables) {
-        strategy.executeStrategy(this.file, table, this.prefixToExclude, this.basePackage);
-      }
+    for (Table table : this.tables) {
+      new DaoPatternStrategy()
+      .executeStrategy(
+          this.file,
+          table,
+          this.prefixToExclude,
+          this.basePackage
+        );
     }
     LOGGER.info("GenericGenerator:executeStrategies - OUT");
   }
