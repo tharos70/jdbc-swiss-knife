@@ -14,9 +14,6 @@ public class App {
 
   public static void main(String[] args) {
     LOGGER.info("App - IN");
-    //DatabaseMetadataExtractor dbme = new DatabaseMetadataExtractor("org.postgresql.Driver",
-    //		"jdbc:postgresql://tst-territorio-vdb01.territorio.csi.it:5432/PGISOLATST", "geoconf", "mypass");
-
     DatabaseMetadataExtractor dbme = new DatabaseMetadataExtractor(
       "org.postgresql.Driver",
       "jdbc:postgresql://localhost:5432/postgres",
@@ -36,11 +33,7 @@ public class App {
       // )
       //   .executeStrategies();
       new DaoPatternStrategy()
-      .generate(
-          tableList.get(0),
-          tableList.get(0).getName(),
-          "com.tharos.jdbc.swissknife.out"
-        );
+      .generate(tableList.get(0), "com.tharos.jdbc.swissknife.out");
     } catch (IOException e) {
       e.printStackTrace();
     }

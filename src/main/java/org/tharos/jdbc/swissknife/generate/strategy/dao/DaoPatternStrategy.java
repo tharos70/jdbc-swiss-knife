@@ -23,9 +23,8 @@ public class DaoPatternStrategy {
   private String purifiedName;
   private String basePackage;
 
-  public void generate(Table table, String purifiedName, String basePackage)
-    throws IOException {
-    this.purifiedName = purifiedName;
+  public void generate(Table table, String basePackage) throws IOException {
+    this.purifiedName = table.getName();
     this.basePackage = basePackage;
     TypeSpec dto = new DtoGenerator(purifiedName, table).createDtoTypeSpec();
     JavaFile dtoJavaFile = JavaFile

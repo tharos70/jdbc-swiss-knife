@@ -6,10 +6,12 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.IOException;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import org.apache.commons.text.WordUtils;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
+import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
 
 public class DtoStrategy {
 
@@ -23,7 +25,8 @@ public class DtoStrategy {
     throws IOException {
     Builder dtoSpecBuilder = TypeSpec
       .classBuilder(purifiedName)
-      .addModifiers(Modifier.PUBLIC);
+      .addModifiers(Modifier.PUBLIC)
+      .addAnnotation(GeneratorUtils.generateAnnotation(Generated.class));
     for (Column col : table.getColumnList()) {
       Class<?> colType = col.getType();
 

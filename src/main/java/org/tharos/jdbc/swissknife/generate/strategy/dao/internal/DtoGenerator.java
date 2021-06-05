@@ -3,6 +3,7 @@ package org.tharos.jdbc.swissknife.generate.strategy.dao.internal;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
@@ -23,7 +24,8 @@ public class DtoGenerator {
       .classBuilder(
         GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(purifiedName)
       )
-      .addModifiers(Modifier.PUBLIC);
+      .addModifiers(Modifier.PUBLIC)
+      .addAnnotation(GeneratorUtils.generateAnnotation(Generated.class));
     for (Column col : table.getColumnList()) {
       Class<?> colType = col.getType();
       FieldSpec columnField = FieldSpec

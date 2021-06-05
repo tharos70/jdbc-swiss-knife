@@ -34,3 +34,6 @@ This project is considered completed and won't be developed further.
 
 ## Contacts
 You can contact me using my account e-mail or opening an issue on this repo. I'll try to reply ASAP.
+
+
+
