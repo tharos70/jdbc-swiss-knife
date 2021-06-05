@@ -23,11 +23,7 @@ public class DaoPatternStrategy {
   private String purifiedName;
   private String basePackage;
 
-  public TypeSpec executeInternalStrategy(
-    Table table,
-    String purifiedName,
-    String basePackage
-  )
+  public void generate(Table table, String purifiedName, String basePackage)
     throws IOException {
     this.purifiedName = purifiedName;
     this.basePackage = basePackage;
@@ -77,7 +73,6 @@ public class DaoPatternStrategy {
       .indent("    ")
       .build();
     daoImplJavaFile.writeTo(new File("C:\\workspaces\\jdbc-swiss-knife\\gen")); // TODO portare fuori
-    return null;
   }
 
   private TypeSpec createDaoImplTypeSpec(

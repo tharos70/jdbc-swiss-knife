@@ -6,7 +6,6 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
-import java.math.BigDecimal;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;

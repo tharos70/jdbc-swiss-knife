@@ -36,7 +36,7 @@ public class App {
       // )
       //   .executeStrategies();
       new DaoPatternStrategy()
-      .executeInternalStrategy(
+      .generate(
           tableList.get(0),
           tableList.get(0).getName(),
           "com.tharos.jdbc.swissknife.out"
