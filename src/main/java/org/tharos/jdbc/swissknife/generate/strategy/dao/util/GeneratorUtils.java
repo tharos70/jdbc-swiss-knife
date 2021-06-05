@@ -2,7 +2,13 @@ package org.tharos.jdbc.swissknife.generate.strategy.dao.util;
 
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeSpec.Builder;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -21,6 +27,18 @@ public class GeneratorUtils {
     sb.append(" = new ");
     sb.append(typeName);
     sb.append("()");
+    return sb.toString();
+  }
+
+  public static String generateVariableDeclaration(
+    String typeName,
+    String instanceName
+  ) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(typeName);
+    sb.append(" ");
+    sb.append(instanceName);
+    sb.append(";");
     return sb.toString();
   }
 
@@ -47,6 +65,17 @@ public class GeneratorUtils {
     return new String(c);
   }
 
+  public static String capitalize(final String string) {
+    if (string == null || string.length() == 0) {
+      return string;
+    }
+
+    char c[] = string.toCharArray();
+    c[0] = Character.toUpperCase(c[0]);
+
+    return new String(c);
+  }
+
   public static MethodSpec generateGetterForColName(Column col) {
     return MethodSpec
       .methodBuilder(
@@ -57,6 +86,18 @@ public class GeneratorUtils {
       .addStatement(
         "return this." + generateInstanceNameFromSnakeCaseString(col.getName())
       )
+      .build();
+  }
+
+  public static MethodSpec generateGetterForField(
+    Class<?> fieldType,
+    String fieldName
+  ) {
+    return MethodSpec
+      .methodBuilder("get" + capitalize(fieldName))
+      .addModifiers(Modifier.PUBLIC)
+      .returns(fieldType)
+      .addStatement("return this." + fieldName)
       .build();
   }
 
@@ -90,5 +131,74 @@ public class GeneratorUtils {
 
   public static AnnotationSpec generateOverrideAnnotation() {
     return AnnotationSpec.builder(Override.class).build();
+  }
+
+  public static AnnotationSpec generateAnnotation(Class<?> clazz) {
+    return AnnotationSpec.builder(clazz).build();
+  }
+
+  public static String generateColumnStringListForSQL(List<Column> columnList) {
+    StringBuilder sb = new StringBuilder();
+    for (Column column : columnList) {
+      sb.append(column.getName());
+      sb.append(", ");
+    }
+    sb.deleteCharAt(sb.length() - 2);
+    return sb.toString();
+  }
+
+  public static TypeSpec createExceptionTypeSpec(String name) {
+    FieldSpec throwable = FieldSpec
+      .builder(Throwable.class, "cause", Modifier.PRIVATE)
+      .build();
+    MethodSpec simpleConstructor = MethodSpec
+      .constructorBuilder()
+      .addModifiers(Modifier.PUBLIC)
+      .addParameter(String.class, "message")
+      .addStatement("super(message)")
+      .build();
+    MethodSpec twoParamsConstructor = MethodSpec
+      .constructorBuilder()
+      .addModifiers(Modifier.PUBLIC)
+      .addParameter(String.class, "message")
+      .addParameter(Throwable.class, "cause")
+      .addStatement("super(message)")
+      .addStatement("this.cause = throwable")
+      .build();
+
+    Builder exceptionSpecBuilder = TypeSpec
+      .classBuilder(name)
+      .addModifiers(Modifier.PUBLIC)
+      .superclass(Exception.class)
+      .addAnnotation(generateAnnotation(Generated.class))
+      .addField(throwable)
+      .addMethod(simpleConstructor)
+      .addMethod(twoParamsConstructor)
+      .addMethod(generateGetterForField(Throwable.class, "cause"));
+    return exceptionSpecBuilder.build();
+  }
+
+  public static String generateToStringStatementAccordingToColumnType(
+    Class<?> type,
+    String name
+  ) {
+    switch (type.getName()) {
+      case "java.lang.String":
+        return name;
+      case "java.math.BigDecimal":
+      case "java.lang.Boolean":
+      case "java.lang.Byte":
+      case "java.lang.Byte[]":
+      case "java.lang.Short":
+      case "java.lang.Integer":
+      case "java.lang.Long":
+      case "java.lang.Float":
+      case "java.lang.Double":
+        return name.toString();
+      default:
+        throw new UnsupportedOperationException(
+          "Type not supported so far... [" + type.getName() + "]"
+        );
+    }
   }
 }

@@ -158,7 +158,7 @@ public class DatabaseMetadataExtractor {
       DatabaseMetaData databaseMetaData = connection.getMetaData();
       ResultSet columns = databaseMetaData.getColumns(
         null,
-        null,
+        schema,
         tableName,
         null
       );
@@ -172,7 +172,7 @@ public class DatabaseMetadataExtractor {
         col.setDecimalDigits(columns.getInt("DECIMAL_DIGITS"));
         colsMap.put(col.getName(), col);
       }
-      ResultSet PK = databaseMetaData.getPrimaryKeys(null, user, tableName);
+      ResultSet PK = databaseMetaData.getPrimaryKeys(null, schema, tableName);
       while (PK.next()) {
         String pkCol = PK.getString("COLUMN_NAME");
         if (colsMap.containsKey(pkCol)) {
@@ -181,7 +181,7 @@ public class DatabaseMetadataExtractor {
       }
 
       // Get Foreign Keys
-      ResultSet FK = databaseMetaData.getImportedKeys(null, user, tableName);
+      ResultSet FK = databaseMetaData.getImportedKeys(null, schema, tableName);
       while (FK.next()) {
         String fkTable = FK.getString("FKTABLE_NAME");
         String fkColumn = FK.getString("FKCOLUMN_NAME");

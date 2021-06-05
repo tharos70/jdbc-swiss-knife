@@ -8,9 +8,21 @@ public class Table {
   private String name;
   private String sequenceName;
   private List<Column> columnList = new ArrayList<Column>();
+  private List<Column> primaryKeys = new ArrayList<Column>();
 
   public String getName() {
     return name;
+  }
+
+  public List<Column> getPrimaryKeys() {
+    if (primaryKeys.isEmpty()) {
+      for (Column column : getColumnList()) {
+        if (column.isPrimaryKey()) {
+          this.primaryKeys.add(column);
+        }
+      }
+    }
+    return this.primaryKeys;
   }
 
   public String getSequenceName() {
