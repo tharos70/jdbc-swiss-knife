@@ -6,6 +6,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 import java.util.List;
@@ -56,6 +57,7 @@ public class DaoImplGenerator {
     );
 
     MethodSpec findByFilter = generateFindByFilter(table, dto, daoException);
+    MethodSpec deleteByKey = generateDeleteByKey(table, dto, daoException);
 
     TypeSpec daoImplType = TypeSpec
       .classBuilder(
@@ -71,12 +73,50 @@ public class DaoImplGenerator {
       .addMethod(sequenceNameGetter)
       .addMethod(findByPrimaryKey)
       .addMethod(findByFilter)
+      .addMethod(deleteByKey)
       .addAnnotation(GeneratorUtils.generateRepositoryAnnotation())
       .addModifiers(Modifier.PUBLIC)
       .addField(rowMapperInstance)
       .addField(loggerInstance)
       .build();
+
     return daoImplType;
+  }
+
+  private MethodSpec generateDeleteByKey(
+    Table table2,
+    TypeSpec dto,
+    TypeSpec daoException
+  ) {
+    MethodSpec.Builder deleteByKey = MethodSpec
+      .methodBuilder("deleteByKey")
+      .addModifiers(Modifier.PUBLIC)
+      .returns(TypeName.VOID)
+      .addException(
+        ClassName.get(this.basePackage + "exception", daoException.name)
+      );
+
+    CodeBlock.Builder deleteBlock = CodeBlock
+      .builder()
+      .addStatement("StringBuilder sb = new StringBuilder()")
+      .addStatement(
+        "sb.append(\"DELETE FROM " + table.getName() + " WHERE \")"
+      );
+    int lineCounter = 0;
+    for (Column pk : table.getPrimaryKeys()) {
+      deleteBlock.addStatement(
+        "sb.append(\" " +
+        (lineCounter > 0 ? " AND " : "") +
+        "" +
+        pk.getName() +
+        " = :" +
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(pk.getName()) +
+        "\")"
+      );
+      lineCounter++;
+    }
+    deleteByKey.addCode(deleteBlock.build());
+    return deleteByKey.build();
   }
 
   private MethodSpec generateFindByFilter(
@@ -97,6 +137,9 @@ public class DaoImplGenerator {
             )
           )
         )
+      )
+      .addException(
+        ClassName.get(this.basePackage + "exception", daoException.name)
       );
     for (Column col : table.getPrimaryKeys()) {
       findByFilter.addParameter(
@@ -169,6 +212,9 @@ public class DaoImplGenerator {
           ) +
           "Dto"
         )
+      )
+      .addException(
+        ClassName.get(this.basePackage + "exception", daoException.name)
       );
     for (Column col : table.getPrimaryKeys()) {
       findByKey.addParameter(
