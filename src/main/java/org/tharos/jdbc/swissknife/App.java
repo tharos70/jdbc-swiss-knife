@@ -1,5 +1,6 @@
 package org.tharos.jdbc.swissknife;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +34,11 @@ public class App {
       // )
       //   .executeStrategies();
       new DaoPatternStrategy()
-      .generate(tableList.get(0), "com.tharos.jdbc.swissknife.out");
+      .generate(
+          tableList.get(0),
+          "com.tharos.jdbc.swissknife.out",
+          new File("C:\\workspaces\\jdbc-swiss-knife\\gen")
+        );
     } catch (IOException e) {
       e.printStackTrace();
     }

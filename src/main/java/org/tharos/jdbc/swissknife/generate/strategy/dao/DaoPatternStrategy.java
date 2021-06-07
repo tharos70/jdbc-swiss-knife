@@ -6,9 +6,12 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.lang.model.element.Modifier;
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -23,7 +26,8 @@ public class DaoPatternStrategy {
   private String purifiedName;
   private String basePackage;
 
-  public void generate(Table table, String basePackage) throws IOException {
+  public void generate(Table table, String basePackage, File outputFolder)
+    throws IOException {
     this.purifiedName = table.getName();
     this.basePackage = basePackage;
     TypeSpec dto = new DtoGenerator(purifiedName, table).createDtoTypeSpec();
@@ -31,7 +35,7 @@ public class DaoPatternStrategy {
       .builder(this.basePackage.concat(".dto"), dto)
       .indent("    ")
       .build();
-    dtoJavaFile.writeTo(new File("C:\\workspaces\\jdbc-swiss-knife\\gen")); // TODO portare fuori
+    dtoJavaFile.writeTo(outputFolder);
 
     TypeSpec rowmapper = new SimpleRowMapperGenerator(
       basePackage,
@@ -46,9 +50,7 @@ public class DaoPatternStrategy {
       )
       .indent("    ")
       .build();
-    rowmapperJavaFile.writeTo(
-      new File("C:\\workspaces\\jdbc-swiss-knife\\gen")
-    ); // TODO portare fuori
+    rowmapperJavaFile.writeTo(outputFolder);
 
     TypeSpec daoException = GeneratorUtils.createExceptionTypeSpec(
       "DaoException"
@@ -57,9 +59,7 @@ public class DaoPatternStrategy {
       .builder(this.basePackage.concat(".excepion"), daoException)
       .indent("    ")
       .build();
-    daoExceptionJavaFile.writeTo(
-      new File("C:\\workspaces\\jdbc-swiss-knife\\gen")
-    ); // TODO portare fuori
+    daoExceptionJavaFile.writeTo(outputFolder);
 
     TypeSpec daoImpl = createDaoImplTypeSpec(
       dto,
@@ -71,7 +71,7 @@ public class DaoPatternStrategy {
       .builder(this.basePackage.concat(".integration.dao.impl"), daoImpl)
       .indent("    ")
       .build();
-    daoImplJavaFile.writeTo(new File("C:\\workspaces\\jdbc-swiss-knife\\gen")); // TODO portare fuori
+    daoImplJavaFile.writeTo(outputFolder);
   }
 
   private TypeSpec createDaoImplTypeSpec(
@@ -98,6 +98,8 @@ public class DaoPatternStrategy {
       daoException
     );
 
+    MethodSpec findByFilter = generateFindByFilter(table, dto, daoException);
+
     TypeSpec daoImplType = TypeSpec
       .classBuilder(
         CaseFormat.UPPER_UNDERSCORE.to(
@@ -111,12 +113,86 @@ public class DaoPatternStrategy {
       .addMethod(tableNameGetter)
       .addMethod(sequenceNameGetter)
       .addMethod(findByPrimaryKey)
+      .addMethod(findByFilter)
       .addAnnotation(GeneratorUtils.generateRepositoryAnnotation())
       .addModifiers(Modifier.PUBLIC)
       .addField(rowMapperInstance)
       .addField(loggerInstance)
       .build();
     return daoImplType;
+  }
+
+  private MethodSpec generateFindByFilter(
+    Table table,
+    TypeSpec dto,
+    TypeSpec daoException
+  ) {
+    MethodSpec.Builder findByFilter = MethodSpec
+      .methodBuilder("findByFilter")
+      .addModifiers(Modifier.PUBLIC)
+      .returns(
+        ParameterizedTypeName.get(
+          ClassName.get(List.class),
+          TypeVariableName.get(
+            CaseFormat.UPPER_UNDERSCORE.to(
+              CaseFormat.UPPER_CAMEL,
+              this.purifiedName + "Dto"
+            )
+          )
+        )
+      );
+    for (Column col : table.getPrimaryKeys()) {
+      findByFilter.addParameter(
+        col.getType(),
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName())
+      );
+    }
+    findByFilter.addStatement(
+      "LOG.info(\"" +
+      CaseFormat.UPPER_UNDERSCORE.to(
+        CaseFormat.UPPER_CAMEL,
+        this.purifiedName
+      ) +
+      "DaoImpl:findByFilter - IN\")"
+    );
+    findByFilter.addStatement(
+      "List<" +
+      CaseFormat.UPPER_UNDERSCORE.to(
+        CaseFormat.UPPER_CAMEL,
+        this.purifiedName
+      ) +
+      "Dto> result = null"
+    );
+    CodeBlock cbSelectFirstPart = CodeBlock
+      .builder()
+      .addStatement("StringBuilder sb = new StringBuilder()")
+      .addStatement(
+        "sb.append(\"SELECT " +
+        GeneratorUtils.generateColumnStringListForSQL(table.getColumnList()) +
+        "\")"
+      )
+      .addStatement("sb.append(\"FROM " + table.getName() + "\" )")
+      .addStatement("sb.append(\"WHERE \")")
+      .build();
+    findByFilter.addCode(cbSelectFirstPart);
+    CodeBlock.Builder cbSelectFilterPart = CodeBlock.builder();
+    int lineCounter = 0;
+    for (Column col : table.getColumnList()) {
+      cbSelectFilterPart.addStatement(
+        "sb.append(\"(" +
+        (lineCounter > 0 ? " AND " : "") +
+        ":" +
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
+        " is null OR " +
+        col.getName() +
+        " = :" +
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
+        ")\")"
+      );
+      lineCounter++;
+    }
+    findByFilter.addCode(cbSelectFilterPart.build());
+    return findByFilter.build();
   }
 
   private MethodSpec generateFindByPrimaryKey(
@@ -212,28 +288,6 @@ public class DaoPatternStrategy {
       .build();
     findByKey.addCode(cbExecuteQuery);
     return findByKey.build();
-    // protected <T> List<T> executeQueryStatement(String query, T dto, RowMapper<T> rm) throws DaoException{
-    //   try {
-    //   List<T> result =  jdbcTemplate.query(query,  getParametersAndLogQuery(query, dto), rm);
-    //   return result;
-    //   }
-    //   catch (Exception e) {
-    //   logger.error(getClass().getSimpleName()+".executeQueryStatement exception",e);
-    //   throw new DaoException("Query failed", e);
-    //   }
-    //   }
-    // public AtterrTQueueDTO findByPrimaryKey(Long idTQueue) throws DaoException {
-    //   AtterrTQueueDTO dtoWithKey = new AtterrTQueueDTO();
-    //   dtoWithKey.setIdTQueue(idTQueue);
-    //   String sql = "select " + "filter," + "session_id," + "id_t_queue, fk_status, dt_insert, num_retry, api_result "
-    //   + "from " + "atterr_t_queue " + "where " + "id_t_queue = :idTQueue ";
-    //   List<AtterrTQueueDTO> res = executeQueryStatement(sql, dtoWithKey, this);
-
-    //   if (res == null || res.size() != 1) {
-    //   throw new DaoException("Coda item avente id ["+idTQueue+"] non trovato");
-    //   }
-    //   return res.get(0);
-    //   }
   }
 
   private String generateJdbcMappingsLoggingForTablePksValues(Table table) {

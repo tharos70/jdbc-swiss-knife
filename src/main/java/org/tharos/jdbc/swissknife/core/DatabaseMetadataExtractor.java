@@ -63,7 +63,7 @@ public class DatabaseMetadataExtractor {
     return connection;
   }
 
-  //    TODO
+  @Deprecated
   public void executeQuery() {
     Scanner scanner = new Scanner(System.in);
     String query = scanner.nextLine();
@@ -97,7 +97,9 @@ public class DatabaseMetadataExtractor {
   }
 
   public ArrayList<Table> getTablesList() {
-    initializeConnection();
+    if (connection == null) {
+      initializeConnection();
+    }
     DatabaseMetaData databaseMetaData = null;
     ArrayList<Table> tableList = new ArrayList<Table>();
     try {
@@ -153,6 +155,9 @@ public class DatabaseMetadataExtractor {
   }
 
   public List<Column> extractColumnsInfo(String tableName) {
+    if (connection == null) {
+      initializeConnection();
+    }
     Map<String, Column> colsMap = new HashMap<String, Column>();
     try {
       DatabaseMetaData databaseMetaData = connection.getMetaData();
