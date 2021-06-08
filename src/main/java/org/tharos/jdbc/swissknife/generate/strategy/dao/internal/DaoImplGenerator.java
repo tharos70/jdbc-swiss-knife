@@ -116,6 +116,38 @@ public class DaoImplGenerator {
       lineCounter++;
     }
     deleteByKey.addCode(deleteBlock.build());
+
+    CodeBlock cbExecuteDelete = CodeBlock
+      .builder()
+      .beginControlFlow("try")
+      .addStatement(
+        "result = jdbcTemplate.update(sb.toString(), new Object[]{" +
+        generateJdbcMappingsForTablePks(table) +
+        "}) "
+      )
+      .nextControlFlow("catch ($T e)", Exception.class)
+      .addStatement(
+        "throw new $T(\"" +
+        CaseFormat.UPPER_UNDERSCORE.to(
+          CaseFormat.UPPER_CAMEL,
+          this.purifiedName
+        ) +
+        "DaoImpl:delete -> Record not found\", e)",
+        ClassName.get(this.basePackage + ".exception", daoException.name)
+      )
+      .nextControlFlow("finally")
+      .addStatement(
+        "LOG.info(\"" +
+        CaseFormat.UPPER_UNDERSCORE.to(
+          CaseFormat.UPPER_CAMEL,
+          this.purifiedName
+        ) +
+        "DaoImpl:delete - OUT\")"
+      )
+      .endControlFlow()
+      .addStatement("return result")
+      .build();
+    deleteByKey.addCode(cbExecuteDelete);
     return deleteByKey.build();
   }
 
@@ -192,6 +224,37 @@ public class DaoImplGenerator {
       lineCounter++;
     }
     findByFilter.addCode(cbSelectFilterPart.build());
+    CodeBlock cbExecuteQuery = CodeBlock
+      .builder()
+      .beginControlFlow("try")
+      .addStatement(
+        "result = jdbcTemplate.queryForObject(sb.toString(), new Object[]{" +
+        generateJdbcMappingsForTablePks(table) +
+        "},  rowMapper ) "
+      )
+      .nextControlFlow("catch ($T e)", Exception.class)
+      .addStatement(
+        "throw new $T(\"" +
+        CaseFormat.UPPER_UNDERSCORE.to(
+          CaseFormat.UPPER_CAMEL,
+          this.purifiedName
+        ) +
+        "DaoImpl:findByFilter -> Record not found\", e)",
+        ClassName.get(this.basePackage + ".exception", daoException.name)
+      )
+      .nextControlFlow("finally")
+      .addStatement(
+        "LOG.info(\"" +
+        CaseFormat.UPPER_UNDERSCORE.to(
+          CaseFormat.UPPER_CAMEL,
+          this.purifiedName
+        ) +
+        "DaoImpl:findByFIlter - OUT\")"
+      )
+      .endControlFlow()
+      .addStatement("return result")
+      .build();
+    findByFilter.addCode(cbExecuteQuery);
     return findByFilter.build();
   }
 
@@ -272,9 +335,9 @@ public class DaoImplGenerator {
           CaseFormat.UPPER_CAMEL,
           this.purifiedName
         ) +
-        "DaoImpl:findByPrimaryKey -> Record con chiave [" +
+        "DaoImpl:findByPrimaryKey -> Record having key [" +
         generateJdbcMappingsLoggingForTablePksValues(table) +
-        "] non trovato\", e)",
+        "] not found\", e)",
         ClassName.get(this.basePackage + ".exception", daoException.name)
       )
       .nextControlFlow("finally")
