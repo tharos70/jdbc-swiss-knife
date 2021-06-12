@@ -24,8 +24,8 @@ public class DtoGenerator {
       .classBuilder(
         GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(purifiedName)
       )
-      .addModifiers(Modifier.PUBLIC)
-      .addAnnotation(GeneratorUtils.generateAnnotation(Generated.class));
+      .addModifiers(Modifier.PUBLIC);
+    // .addAnnotation(GeneratorUtils.generateAnnotation(Generated.class));
     for (Column col : table.getColumnList()) {
       Class<?> colType = col.getType();
       FieldSpec columnField = FieldSpec

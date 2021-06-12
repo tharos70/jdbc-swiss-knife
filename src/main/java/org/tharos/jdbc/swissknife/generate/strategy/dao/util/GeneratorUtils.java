@@ -4,14 +4,17 @@ import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
+import java.lang.reflect.Type;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.tharos.jdbc.swissknife.dto.Column;
+import org.tharos.jdbc.swissknife.dto.Table;
 
 public class GeneratorUtils {
 
@@ -26,6 +29,38 @@ public class GeneratorUtils {
     sb.append(" = new ");
     sb.append(typeName);
     sb.append("()");
+    return sb.toString();
+  }
+
+  public static MethodSpec generateSequenceNameGetter(String sequenceName) {
+    return MethodSpec
+      .methodBuilder("getSequenceName")
+      //  .addAnnotation(GeneratorUtils.generateOverrideAnnotation())
+      .addModifiers(Modifier.PRIVATE)
+      .returns(String.class)
+      .addStatement("return \"" + sequenceName + "\"")
+      .build();
+  }
+
+  public static MethodSpec generateTableNameGetter(String tableName) {
+    return MethodSpec
+      .methodBuilder("getTableName")
+      // .addAnnotation(GeneratorUtils.generateOverrideAnnotation())
+      .addModifiers(Modifier.PRIVATE)
+      .returns(String.class)
+      .addStatement("return \"" + tableName + "\"")
+      .build();
+  }
+
+  public static String generateJdbcMappingsForTablePks(Table table) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < table.getPrimaryKeys().size(); i++) {
+      Column pk = table.getPrimaryKeys().get(i);
+      sb.append(
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(pk.getName()) +
+        ((i < (table.getPrimaryKeys().size() - 1)) ? ", " : "")
+      );
+    }
     return sb.toString();
   }
 
@@ -106,11 +141,11 @@ public class GeneratorUtils {
         "set" + generateCamelCaseNameFromSnakeCaseString(col.getName())
       )
       .addParameter(
-        String.class,
+        col.getType(),
         generateInstanceNameFromSnakeCaseString(col.getName())
       )
       .addModifiers(Modifier.PUBLIC)
-      .returns(col.getType())
+      .returns(TypeName.VOID)
       .addStatement(
         "this." +
         generateInstanceNameFromSnakeCaseString(col.getName()) +
@@ -160,7 +195,7 @@ public class GeneratorUtils {
       .constructorBuilder()
       .addModifiers(Modifier.PUBLIC)
       .addParameter(String.class, "message")
-      .addParameter(Throwable.class, "cause")
+      .addParameter(Throwable.class, "throwable")
       .addStatement("super(message)")
       .addStatement("this.cause = throwable")
       .build();
@@ -169,7 +204,7 @@ public class GeneratorUtils {
       .classBuilder(name)
       .addModifiers(Modifier.PUBLIC)
       .superclass(Exception.class)
-      .addAnnotation(generateAnnotation(Generated.class))
+      // .addAnnotation(generateAnnotation(Generated.class))
       .addField(throwable)
       .addMethod(simpleConstructor)
       .addMethod(twoParamsConstructor)

@@ -37,7 +37,7 @@ public class SimpleRowMapperGenerator {
         GeneratorUtils.generateVariableInstantiation(
           CaseFormat.UPPER_UNDERSCORE.to(
             CaseFormat.UPPER_CAMEL,
-            this.purifiedName + "Dto"
+            this.purifiedName
           ),
           "dto"
         )
@@ -63,7 +63,7 @@ public class SimpleRowMapperGenerator {
           TypeVariableName.get(
             CaseFormat.UPPER_UNDERSCORE.to(
               CaseFormat.UPPER_CAMEL,
-              this.purifiedName + "Dto"
+              this.purifiedName
             )
           )
         )
@@ -82,11 +82,11 @@ public class SimpleRowMapperGenerator {
               CaseFormat.UPPER_UNDERSCORE.to(
                 CaseFormat.UPPER_CAMEL,
                 this.purifiedName
-              ) +
-              "Dto"
+              )
             )
           )
           .addCode(mapRowImpl)
+          .addStatement("return dto")
           .build()
       )
       .build();
@@ -98,9 +98,10 @@ public class SimpleRowMapperGenerator {
       "dto." +
       GeneratorUtils.generateSetterForColName(col).name +
       "(rs.get" +
-      GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(
-        col.getType().getSimpleName() + "(\"" + col.getName() + "\"))"
-      )
+      col.getType().getSimpleName() +
+      "(\"" +
+      col.getName() +
+      "\"))"
     );
   }
 }
