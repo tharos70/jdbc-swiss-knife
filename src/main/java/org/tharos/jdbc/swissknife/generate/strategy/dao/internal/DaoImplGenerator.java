@@ -33,7 +33,8 @@ public class DaoImplGenerator {
     TypeSpec dto,
     TypeSpec rowmapper,
     TypeSpec daoException
-  ) {
+  )
+    throws IllegalArgumentException, IllegalAccessException {
     FieldSpec rowMapperInstance = generateRowMapperInstantiationStatement(
       rowmapper
     );

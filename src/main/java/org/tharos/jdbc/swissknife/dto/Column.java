@@ -6,6 +6,7 @@ public class Column {
   private Class<?> type;
   private boolean nullable;
   private Integer size;
+  private int sqlType;
   private Integer decimalDigits;
   private boolean autoincrement;
   private boolean isPrimaryKey;
@@ -15,6 +16,14 @@ public class Column {
 
   public String getForeignTableName() {
     return foreignTableName;
+  }
+
+  public int getSqlType() {
+    return sqlType;
+  }
+
+  public void setSqlType(int sqlType) {
+    this.sqlType = sqlType;
   }
 
   public void setForeignTableName(String foreignTableName) {

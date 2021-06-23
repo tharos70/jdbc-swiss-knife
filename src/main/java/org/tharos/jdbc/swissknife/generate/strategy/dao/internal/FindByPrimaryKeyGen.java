@@ -55,7 +55,7 @@ public class FindByPrimaryKeyGen {
         "\")"
       )
       .addStatement("sb.append(\"FROM " + table.getName() + "\" )")
-      .addStatement("sb.append(\"WHERE \")")
+      .addStatement("sb.append(\" WHERE \")")
       .build();
     findByKey.addCode(cbSelectFirstPart);
     CodeBlock.Builder cbSelectFilterPart = CodeBlock.builder();

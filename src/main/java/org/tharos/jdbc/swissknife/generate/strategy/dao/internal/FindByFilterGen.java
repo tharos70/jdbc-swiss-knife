@@ -5,11 +5,11 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 import java.util.List;
 import javax.lang.model.element.Modifier;
+import org.tharos.jdbc.swissknife.core.SQLTypeMap;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
@@ -22,7 +22,8 @@ public class FindByFilterGen {
     TypeSpec daoException,
     String basePackage,
     String purifiedName
-  ) {
+  )
+    throws IllegalArgumentException, IllegalAccessException {
     MethodSpec.Builder findByFilter = MethodSpec
       .methodBuilder("findByFilter")
       .addModifiers(Modifier.PUBLIC)
@@ -64,15 +65,16 @@ public class FindByFilterGen {
         "\")"
       )
       .addStatement("sb.append(\"FROM " + table.getName() + "\" )")
-      .addStatement("sb.append(\"WHERE \")")
+      .addStatement("sb.append(\" WHERE \")")
       .build();
     findByFilter.addCode(cbSelectFirstPart);
     CodeBlock.Builder cbSelectFilterPart = CodeBlock.builder();
     int lineCounter = 0;
     for (Column col : table.getColumnList()) {
       cbSelectFilterPart.addStatement(
-        "sb.append(\"(" +
+        "sb.append(\"" +
         (lineCounter > 0 ? " AND " : "") +
+        "(" +
         ":" +
         GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
         " is null OR " +
@@ -88,22 +90,23 @@ public class FindByFilterGen {
       .builder()
       .beginControlFlow("try")
       .addStatement(
-        "Map<String, Object> params = new HashMap<String, Object>()"
+        "MapSqlParameterSource namedParameters = new MapSqlParameterSource()"
       );
 
     for (Column col : table.getColumnList()) {
       cbExecuteQuery.addStatement(
-        "params.put(\"" +
+        "namedParameters.addValue(\"" +
         GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
         "\" , dto.get" +
         GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(col.getName()) +
-        "())"
+        "(), Types." +
+        SQLTypeMap.getAllJdbcTypeNames().get(col.getSqlType()) +
+        ")"
       );
     }
-
     cbExecuteQuery
       .addStatement(
-        "result = jdbcTemplate.query(sb.toString(), params,  rowMapper ) "
+        "result = jdbcTemplate.query(sb.toString(), namedParameters,  rowMapper ) "
       )
       .nextControlFlow("catch ($T e)", Exception.class)
       .addStatement(

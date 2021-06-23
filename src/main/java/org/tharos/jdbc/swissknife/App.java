@@ -15,6 +15,7 @@ public class App {
 
   public static void main(String[] args) {
     LOGGER.info("App - IN");
+
     DatabaseMetadataExtractor dbme = new DatabaseMetadataExtractor(
       "org.postgresql.Driver",
       "jdbc:postgresql://localhost:5432/postgres",
@@ -39,7 +40,7 @@ public class App {
           "com.tharos.jdbc.swissknife.out",
           new File("C:\\workspaces\\jdbc-swiss-knife\\gen")
         );
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

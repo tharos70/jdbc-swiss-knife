@@ -3,18 +3,17 @@ package org.tharos.jdbc.swissknife.generate.strategy.dao.internal;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
-import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
 
-public class DtoGenerator {
+public class DtoGen {
 
   private String purifiedName;
   private Table table;
 
-  public DtoGenerator(String purifiedName, Table table) {
+  public DtoGen(String purifiedName, Table table) {
     this.purifiedName = purifiedName;
     this.table = table;
   }

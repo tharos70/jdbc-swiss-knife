@@ -170,6 +170,7 @@ public class DatabaseMetadataExtractor {
       while (columns.next()) {
         Column col = new Column();
         col.setName(columns.getString("COLUMN_NAME"));
+        col.setSqlType(columns.getInt("DATA_TYPE"));
         col.setType(SQLTypeMap.toClass(columns.getInt("DATA_TYPE")));
         col.setNullable(columns.getBoolean("IS_NULLABLE"));
         col.setAutoincrement(columns.getBoolean("IS_AUTOINCREMENT"));
