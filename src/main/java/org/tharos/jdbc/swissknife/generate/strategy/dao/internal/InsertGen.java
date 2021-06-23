@@ -6,6 +6,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
+import org.tharos.jdbc.swissknife.core.SQLTypeMap;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
@@ -18,7 +19,8 @@ public class InsertGen {
     TypeSpec daoException,
     String basePackage,
     String purifiedName
-  ) {
+  )
+    throws IllegalArgumentException, IllegalAccessException {
     MethodSpec.Builder insert = MethodSpec
       .methodBuilder("insert")
       .addParameter(ClassName.get(basePackage + ".dto", dto.name), "dto")
@@ -36,10 +38,6 @@ public class InsertGen {
       "LOG.info(\"" +
       CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, purifiedName) +
       "DaoImpl:insert - IN\")"
-    );
-    insert.addStatement(
-      CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, purifiedName) +
-      " result = null"
     );
     CodeBlock.Builder insertBlock = CodeBlock
       .builder()
@@ -83,21 +81,22 @@ public class InsertGen {
         "// TODO Be sure to set all the primary keys on the input DTO"
       );
     }
-
     cbExecuteInsert.addStatement(
-      "Map<String, Object> params = new HashMap<String, Object>()"
+      "MapSqlParameterSource namedParameters = new MapSqlParameterSource()"
     );
-    for (Column pk : table.getPrimaryKeys()) {
+    for (Column col : table.getColumnList()) {
       cbExecuteInsert.addStatement(
-        "params.put(\"" +
-        GeneratorUtils.generateInstanceNameFromSnakeCaseString(pk.getName()) +
+        "namedParameters.addValue(\"" +
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
         "\" , dto.get" +
-        GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(pk.getName()) +
-        "())"
+        GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(col.getName()) +
+        "(), Types." +
+        SQLTypeMap.getAllJdbcTypeNames().get(col.getSqlType()) +
+        ")"
       );
     }
     cbExecuteInsert
-      .addStatement("jdbcTemplate.update(sb.toString(), params) ")
+      .addStatement("jdbcTemplate.update(sb.toString(), namedParameters) ")
       .nextControlFlow("catch ($T e)", Exception.class)
       .addStatement(
         "throw new $T(\"" +
@@ -112,7 +111,7 @@ public class InsertGen {
         "DaoImpl:insert - OUT\")"
       )
       .endControlFlow()
-      .addStatement("return result")
+      .addStatement("return dto")
       .build();
     insert.addCode(cbExecuteInsert.build());
     return insert.build();

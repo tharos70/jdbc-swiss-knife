@@ -7,11 +7,20 @@ public class Table {
 
   private String name;
   private String sequenceName;
+  private String schemaName;
   private List<Column> columnList = new ArrayList<Column>();
   private List<Column> primaryKeys = new ArrayList<Column>();
 
   public String getName() {
     return name;
+  }
+
+  public String getSchemaName() {
+    return schemaName;
+  }
+
+  public void setSchemaName(String schemaName) {
+    this.schemaName = schemaName;
   }
 
   public List<Column> getPrimaryKeys() {

@@ -113,6 +113,7 @@ public class DatabaseMetadataExtractor {
       );
       while (resultSet.next()) {
         Table tbl = new Table();
+        tbl.setSchemaName(this.schema);
         tbl.setName(resultSet.getString("TABLE_NAME"));
         tbl.setSequenceName("seq_" + tbl.getName());
         tbl.setColumnList(this.extractColumnsInfo(tbl.getName()));

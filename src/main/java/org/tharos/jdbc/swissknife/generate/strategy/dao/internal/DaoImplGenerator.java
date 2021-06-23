@@ -202,7 +202,9 @@ public class DaoImplGenerator {
     CodeBlock.Builder sequenceNextValBlock = CodeBlock
       .builder()
       .addStatement(
-        "return jdbcTemplate.queryForObject(\"SELECT nextval('\"+getSequenceName()+\"')\", new HashMap<>(), " +
+        "return jdbcTemplate.queryForObject(\"SELECT nextval('" +
+        table.getSchemaName() +
+        ".\"+getSequenceName()+\"')\", new HashMap<>(), " +
         table.getPrimaryKeys().get(0).getType().getSimpleName() +
         ".class)"
       );
