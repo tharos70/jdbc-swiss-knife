@@ -6,6 +6,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
+import org.tharos.jdbc.swissknife.core.SQLTypeMap;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;
 import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
@@ -18,7 +19,8 @@ public class UpdateGen {
     TypeSpec daoException,
     String basePackage,
     String purifiedName
-  ) {
+  )
+    throws IllegalArgumentException, IllegalAccessException {
     MethodSpec.Builder update = MethodSpec
       .methodBuilder("update")
       .addParameter(ClassName.get(basePackage + ".dto", dto.name), "dto")
@@ -93,20 +95,22 @@ public class UpdateGen {
       .beginControlFlow("try");
 
     cbExecuteUpdate.addStatement(
-      "Map<String, Object> params = new HashMap<String, Object>()"
+      "MapSqlParameterSource namedParameters = new MapSqlParameterSource()"
     );
-    for (Column pk : table.getPrimaryKeys()) {
+    for (Column col : table.getColumnList()) {
       cbExecuteUpdate.addStatement(
-        "params.put(\"" +
-        GeneratorUtils.generateInstanceNameFromSnakeCaseString(pk.getName()) +
+        "namedParameters.addValue(\"" +
+        GeneratorUtils.generateInstanceNameFromSnakeCaseString(col.getName()) +
         "\" , dto.get" +
-        GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(pk.getName()) +
-        "())"
+        GeneratorUtils.generateCamelCaseNameFromSnakeCaseString(col.getName()) +
+        "(), Types." +
+        SQLTypeMap.getAllJdbcTypeNames().get(col.getSqlType()) +
+        ")"
       );
     }
 
     cbExecuteUpdate
-      .addStatement("jdbcTemplate.update(sb.toString(), params)")
+      .addStatement("jdbcTemplate.update(sb.toString(), namedParameters)")
       .nextControlFlow("catch ($T e)", Exception.class)
       .addStatement(
         "throw new $T(\"" +
