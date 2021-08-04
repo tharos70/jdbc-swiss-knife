@@ -8,8 +8,6 @@ import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import javax.lang.model.element.Modifier;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +41,7 @@ public class SpringConfigurationGenerator {
       .addMethod(generateDatasourceMethod())
       .addMethod(generateJdbcTemplateMethod(generateDatasourceMethod()));
     for (Table table : this.tableList) {
-      springConfigSpecBuilder.addMethod(generateDaoMethod(table)); //TODO
+      springConfigSpecBuilder.addMethod(generateDaoMethod(table));
     }
     TypeSpec springConfigutartion = springConfigSpecBuilder.build();
     JavaFile springConfigJavaFile = JavaFile
