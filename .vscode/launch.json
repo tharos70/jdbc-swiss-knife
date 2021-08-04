@@ -6,23 +6,16 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch GeneratorUtils",
+            "name": "Launch App",
             "request": "launch",
-            "mainClass": "org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils",
-            "projectName": "jdbc-utils"
+            "mainClass": "org.tharos.jdbc.swissknife.App",
+            "projectName": "jdbc-swiss-knife"
         },
         {
             "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"
-        },
-        {
-            "type": "java",
-            "name": "Launch App",
-            "request": "launch",
-            "mainClass": "org.tharos.jdbc.swissknife.App",
-            "projectName": "jdbc-utils"
         }
     ]
 }

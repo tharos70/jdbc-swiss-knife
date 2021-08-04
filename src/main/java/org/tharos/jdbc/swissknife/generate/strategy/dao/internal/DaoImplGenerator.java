@@ -7,9 +7,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.tharos.jdbc.swissknife.dto.Table;
 import org.tharos.jdbc.swissknife.generate.strategy.dao.util.GeneratorUtils;
 
@@ -100,17 +98,6 @@ public class DaoImplGenerator {
       daoImplType.addMethod(getNextSequenceValue);
     }
     return daoImplType.build();
-  }
-
-  private MethodSpec generateDaoImplInitializerBlock() {
-    return MethodSpec
-      .constructorBuilder()
-      .addAnnotation(GeneratorUtils.generateAutowiredAnnotation())
-      .addModifiers(Modifier.PUBLIC)
-      .addParameter(DataSource.class, "datasource")
-      .addParameter(NamedParameterJdbcTemplate.class, "jdbcTemplate")
-      .addStatement("super(datasource, jdbcTemplate)")
-      .build();
   }
 
   private FieldSpec generateAutowiredJdbcTemplate() {
