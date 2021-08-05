@@ -26,14 +26,6 @@ public class App {
 
     ArrayList<Table> tableList = dbme.getTablesList();
     try {
-      // new GenericGenerator(
-      //   new File("C:\\workspaces\\jdbc-swiss-knife\\gen"),
-      //   new DaoPatternStrategy(),
-      //   tableList,
-      //   "geoapi_t",
-      //   "com.tharos.jdbc.swissknife.out"
-      // )
-      //   .executeStrategies();
       new DaoPatternStrategy()
       .generate(
           tableList.get(0),
@@ -45,7 +37,7 @@ public class App {
         "com.tharos.jdbc.swissknife.out",
         new File("C:\\workspaces\\jdbc-swiss-knife\\gen")
       )
-        .generateSpringConfigurationTypeSpec();
+        .generate();
     } catch (Exception e) {
       e.printStackTrace();
     }

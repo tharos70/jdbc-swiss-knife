@@ -33,7 +33,7 @@ public class SpringConfigurationGenerator {
     this.tableList = tableList;
   }
 
-  public void generateSpringConfigurationTypeSpec() throws IOException {
+  public void generate() throws IOException {
     Builder springConfigSpecBuilder = TypeSpec
       .classBuilder("SpringConfig")
       .addModifiers(Modifier.PUBLIC)

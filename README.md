@@ -9,14 +9,12 @@ It includes:
  - Database metadata reader
  - Database metadata based java code generator supporting:
    - spring-jdbc Dao basic implementation
-   - spring-jdbc Dao advanced implementation (COMING SOON)
- - Database metadata based yaml skeleton generator (COMING SOON)
-  
-> So far, the only supported database is [Posgresql](https://www.postgresql.org/). Anyway, it's quite easy to extend the support to othes jdbc compliant platforms
+   
+> So far, the only supported database is [Posgresql](https://www.postgresql.org/). Anyway, it should be easy to extend the support to other jdbc compliant platforms
 
 ## Installing / Getting started
 
-Simply add the following snippet to you `pom.xml`
+Simply add the following dependency to you `pom.xml`
 
 ```xml
 <dependency>
@@ -53,8 +51,21 @@ Table t = dbme.getTablesList().get(0);
 new DaoPatternStrategy()
       .generate(
           t,
-          "base.package" // base package for generated classes
+          "base.package", // base package for generated classes
+          new File("/path/to/output/folder")
         );
+```
+
+### - Generate spring-jdbc framework based configuration
+
+```java
+...
+List<Table> tableList = dbme.getTablesList();
+new SpringConfigurationGenerator(
+        tableList,
+        "base.package",
+        new File("/path/to/output/folder")
+      ).generate();
 ```
 
 ## Developing
