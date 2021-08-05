@@ -4,7 +4,7 @@
 
 	<groupId>org.tharos</groupId>
 	<artifactId>jdbc-swiss-knife</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>jdbc-utils</name>
@@ -100,4 +100,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub tharos70 Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/tharos70/jdbc-swiss-knife</url>
+		</repository>
+	</distributionManagement>
 </project>
