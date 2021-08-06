@@ -109,3 +109,7 @@ This project is considered *under construction* so use it carefully and at your 
 ## Licensing
 
 All the code in this project is licensed under Apache License 2.0 license.
+
+## Publishing
+
+https://s01.oss.sonatype.org/#stagingRepositories

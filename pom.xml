@@ -6,15 +6,38 @@
 	<artifactId>jdbc-swiss-knife</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
+	<description>A simple set of utilities for handling jdbc accessible metadata.</description>
 
-	<name>jdbc-utils</name>
-	<url>http://maven.apache.org</url>
+	<name>jdbc-swiss-knife</name>
+	<url>https://github.com/tharos70/jdbc-swiss-knife</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Simone Capitani</name>
+			<email>tharos70@gmail.com</email>
+			<organization>tharos.org</organization>
+			<organizationUrl>https://tharos.org</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/tros70/jdbc-swiss-knife.git</connection>
+		<developerConnection>scm:git:git://github.com/tros70/jdbc-swiss-knife.git</developerConnection>
+		<url>https://github.com/tharos70/jdbc-swiss-knife/tree/main</url>
+	</scm>
+
 
 	<dependencies>
 		<dependency>
@@ -102,10 +125,13 @@
 	</build>
 
 	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<repository>
-			<id>github</id>
-			<name>GitHub tharos70 Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/tharos70/jdbc-swiss-knife</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
 </project>
