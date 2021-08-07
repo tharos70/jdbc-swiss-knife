@@ -1,8 +1,9 @@
 package org.tharos.jdbc.swissknife.generate.strategy.dao.internal;
 
+import static com.squareup.javapoet.TypeSpec.Builder;
+
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
 import javax.lang.model.element.Modifier;
 import org.tharos.jdbc.swissknife.dto.Column;
 import org.tharos.jdbc.swissknife.dto.Table;

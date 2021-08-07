@@ -1,10 +1,11 @@
 package org.tharos.jdbc.swissknife.generate.strategy.dao.internal;
 
+import static com.squareup.javapoet.TypeSpec.Builder;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

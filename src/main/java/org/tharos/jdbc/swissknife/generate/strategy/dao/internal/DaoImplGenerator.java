@@ -92,7 +92,6 @@ public class DaoImplGenerator {
     if (table.getPrimaryKeys().size() == 1) {
       MethodSpec getNextSequenceValue = generateGetNextSequenceValue(
         table,
-        dto,
         daoException
       );
       daoImplType.addMethod(getNextSequenceValue);
@@ -163,7 +162,6 @@ public class DaoImplGenerator {
 
   private MethodSpec generateGetNextSequenceValue(
     Table table,
-    TypeSpec dto,
     TypeSpec daoException
   ) {
     if (table.getPrimaryKeys().size() != 1) {

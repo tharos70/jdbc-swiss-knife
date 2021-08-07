@@ -39,7 +39,7 @@ public class App {
       )
         .generate();
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.error("Exception during test execution", e);
     }
   }
 }

@@ -1,5 +1,6 @@
 package org.tharos.jdbc.swissknife.core;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -65,7 +66,7 @@ public class DatabaseMetadataExtractor {
 
   @Deprecated
   public void executeQuery() {
-    Scanner scanner = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
     String query = scanner.nextLine();
     ResultSet resultSet = null;
     try {

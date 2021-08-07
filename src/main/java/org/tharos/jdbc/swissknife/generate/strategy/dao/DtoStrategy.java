@@ -1,10 +1,11 @@
 package org.tharos.jdbc.swissknife.generate.strategy.dao;
 
+import static com.squareup.javapoet.TypeSpec.Builder;
+
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.IOException;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;

@@ -60,9 +60,7 @@ public class FindByPrimaryKeyGen {
     findByKey.addCode(cbSelectFirstPart);
     CodeBlock.Builder cbSelectFilterPart = CodeBlock.builder();
     cbSelectFilterPart.addStatement(
-      "sb.append(\"" +
-      generateSQLFilterStringForTablePks(table, cbSelectFilterPart) +
-      ";\")"
+      "sb.append(\"" + generateSQLFilterStringForTablePks(table) + ";\")"
     );
 
     findByKey.addCode(cbSelectFilterPart.build());
@@ -106,10 +104,7 @@ public class FindByPrimaryKeyGen {
     return findByKey.build();
   }
 
-  private String generateSQLFilterStringForTablePks(
-    Table table,
-    CodeBlock.Builder cbSelectFilterPart
-  ) {
+  private String generateSQLFilterStringForTablePks(Table table) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < table.getPrimaryKeys().size(); i++) {
       Column pk = table.getPrimaryKeys().get(i);

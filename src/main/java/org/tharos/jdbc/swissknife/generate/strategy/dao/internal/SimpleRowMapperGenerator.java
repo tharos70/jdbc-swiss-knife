@@ -1,9 +1,10 @@
 package org.tharos.jdbc.swissknife.generate.strategy.dao.internal;
 
+import static com.squareup.javapoet.CodeBlock.Builder;
+
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.CodeBlock.Builder;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
